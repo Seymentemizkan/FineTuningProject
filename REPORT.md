@@ -42,6 +42,7 @@ Validation loss yaklaşık sabit (≈0.94 civarı),
 Ne belirgin düşüş ne de yükseliş var.
 
 3️⃣ Overfitting (ezberleme) var mı?
+
 🔴 Deep Instruction için:
 
 Evet, overfitting var.
