@@ -6,7 +6,7 @@ Bu rapor, **Fine-Tuning Projesi** kapsamında gerçekleştirilen model eğitimi,
 
 Aşağıdaki grafik, eğitim (train), doğrulama (validation) ve test veri setleri üzerindeki kayıp (loss) değerlerinin değişimini göstermektedir.
 
-![Loss Grafiği](20LossGrafik.png)
+![Loss Grafiği](Rapor/20LossGrafik.png)
 
 ### Veri Sıklığı
 Grafikteki veriler, eğitim konfigürasyonunda belirtildiği üzere **her 20 adımda (step) bir** kaydedilmiştir. Bu sık aralık, modelin öğrenme sürecindeki hassas değişimleri gözlemlememize olanak tanır.
@@ -20,6 +20,6 @@ Grafik incelendiğinde:
 
 Eğitim sürecinde farklı adımlarda kaydedilen modeller (checkpoints), belirli benchmark testlerine tabi tutulmuştur. Aşağıdaki tablo, bu checkpoint'lerin performans karşılaştırmasını ve en iyi modelin nasıl belirlendiğini göstermektedir.
 
-![Benchmark Tablosu](Tablo.jpg)
+![Benchmark Tablosu](Rapor/Tablo.jpg)
 
 **Sonuç:** Tablodaki metrikler (örneğin doğruluk, loss vb.) dikkate alınarak, en düşük doğrulama kaybına veya en yüksek başarı skoruna sahip olan checkpoint, **en iyi model** olarak seçilmiştir.
