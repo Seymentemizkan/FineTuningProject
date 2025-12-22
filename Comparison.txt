@@ -1,0 +1,51 @@
+# Deep Instruction vs Diverse Instruction Benchmark Karşılaştırması
+
+Benchmark testlerindeki **Deep Instruction** ve **Diverse Instruction** modellerinin skor farklarını ve
+cevaplama stillerini incelediğimde, **Deep Instruction** modelinin daha başarılı olduğunu (Step 500'de Deep:
+13 doğru, Diverse: 10 doğru) ve bunun temel sebebinin "basitlik vs. karmaşıklık" olduğunu görüyorum.
+
+İşte `results/livecodebench/detailed/` klasöründeki loglara dayanan detaylı karşılaştırma:
+
+### 1. Genel Farklılıklar
+*   **Deep Instruction:** Sorulara daha **doğrudan ve basit** (pythonic) çözümler üretiyor. Karmaşık
+    algoritmalar yerine temel döngüler ve listeler kullanıyor. Bu yaklaşım, basit problemlerde daha az hata
+    yapmasını sağlıyor.
+*   **Diverse Instruction:** Çözümleri gereksiz yere **karmaşıklaştırma** eğiliminde. Basit bir işlem için
+    bile bazen özyineleme (recursion), gereksiz veri yapıları veya karmaşık matematiksel formüller uyduruyor.
+    Bu da "halüsinasyon" görmesine ve mantık hatalarına yol açıyor.
+
+### 2. Soru Bazlı Karşılaştırmalar
+
+Aşağıda skor farkını yaratan bazı belirleyici soruların analizi bulunmaktadır:
+
+#### **ABC368_A (Cut - Kart Kesme Sorusu)**
+*   **Deep (Doğru):** Listeyi `top_k` ve `remaining` olarak ikiye bölüp doğru sırayla birleştirdi. Python'un
+    dilimleme (slicing) özelliğini doğru kullandı.
+*   **Diverse (Yanlış):** Listeyi böldü ancak `extend` metodunu yanlış mantıkla kullanarak kartları
+    **orijinal sırasıyla** tekrar birleştirdi. Yani işlemi hiç yapmamış gibi oldu.
+
+#### **ABC366_B (Vertical Writing - Dikey Yazma)**
+*   **Deep (Yanlış):** Soruyu yanlış anladı ancak basit bir mantık kurmaya çalıştı.
+*   **Diverse (Yanlış):** Soruyu aşırı karmaşıklaştırdı. Basit bir matris transpozu (döndürme) işlemi
+    yerine, **"suffix" (son ek) hesaplayan ve özyinelemeli (recursive)** çalışan garip bir algoritma uydurdu.
+    Bu, modelin basit görevlerde bile "fazla düşünmeye" çalışıp hata yaptığını gösteriyor.
+
+#### **ABC369_A (369 - Aritmetik Dizi)**
+*   **Deep (Yanlış):** Olası durumları tek tek `if-else` ile kontrol etmeye çalıştı ancak tüm durumları
+    kapsayamadı.
+*   **Diverse (Yanlış):** Sorunun matematiksel özünü (sayıların toplamının tek/çift olması) yakaladı
+    (`(a % 2 == 0) == (b % 2 == 0)`). Ancak bu doğru tespite rağmen, sonucun kaç olacağını yanlış tahmin etti
+    (3 olması gerekirken 1 dedi). Bu, Diverse modelinin **soyutlama yeteneğinin daha yüksek olduğunu ancak
+    sonuca ulaşmada dikkatsiz olduğunu** gösteriyor.
+
+#### **ABC368_B (Decrease 2 Max - En Büyük İkiyi Azalt)**
+*   **Deep (Yanlış):** Sorudaki "her adımda listeyi azalan sırada sırala" talimatını atladı. Sadece ilk iki
+    elemanı azalttı.
+*   **Diverse (Hata):** O da sıralamayı unuttu, üstüne bir de karmaşık döngü yapısı kurduğu için `IndexError`
+    (dizi sınırları dışına çıkma) hatası aldı ve programı çöktü.
+
+### Özet Yorum
+**Deep Instruction** modeli, "daha az ama öz" kod yazarak, özellikle AtCoder gibi net tanımı olan algoritmik
+sorularda daha sağlam duruyor. **Diverse Instruction** ise muhtemelen eğitim verisindeki çeşitlilikten dolayı
+her soruda "farklı/zeki" bir yöntem denemeye çalışıyor ancak bu durum basit sorularda aşırı mühendisliğe
+(over-engineering) ve hatalara yol açıyor.
